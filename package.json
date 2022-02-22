@@ -1,0 +1,15 @@
+{
+  "name": "monitortest-js",
+  "version": "1.0.0",
+  "description": "On-line utility for display integrity testing.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "monitor",
+    "test"
+  ],
+  "author": "Alexander Emashev alex.emashev@gmail.com",
+  "license": "MIT"
+}
