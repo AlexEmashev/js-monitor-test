@@ -1,203 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<style>
-  html,
-  body,
-  div,
-  span,
-  applet,
-  object,
-  iframe,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  blockquote,
-  pre,
-  a,
-  abbr,
-  acronym,
-  address,
-  big,
-  cite,
-  code,
-  del,
-  dfn,
-  em,
-  img,
-  ins,
-  kbd,
-  q,
-  s,
-  samp,
-  small,
-  strike,
-  strong,
-  sub,
-  sup,
-  tt,
-  var,
-  b,
-  u,
-  i,
-  center,
-  dl,
-  dt,
-  dd,
-  ol,
-  ul,
-  li,
-  fieldset,
-  form,
-  label,
-  legend,
-  table,
-  caption,
-  tbody,
-  tfoot,
-  thead,
-  tr,
-  th,
-  td,
-  article,
-  aside,
-  canvas,
-  details,
-  embed,
-  figure,
-  figcaption,
-  footer,
-  header,
-  hgroup,
-  menu,
-  nav,
-  output,
-  ruby,
-  section,
-  summary,
-  time,
-  mark,
-  audio,
-  video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-  }
-
-  /* HTML5 display-role reset for older browsers */
-  article,
-  aside,
-  details,
-  figcaption,
-  figure,
-  footer,
-  header,
-  hgroup,
-  menu,
-  nav,
-  section {
-    display: block;
-  }
-
-  body {
-    line-height: 1;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    color: rgba(0, 0, 0, 0.8);
-    overflow: hidden;
-  }
-
-  ol,
-  ul {
-    list-style: none;
-  }
-
-  blockquote,
-  q {
-    quotes: none;
-  }
-
-  blockquote:before,
-  blockquote:after,
-  q:before,
-  q:after {
-    content: '';
-    content: none;
-  }
-
-  table {
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-
-  h1 {
-    font-size: 3em;
-    margin-bottom: 0.7em;
-    text-align: center;
-  }
-
-  #HelpScreen {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: pink;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #FullScreenButton {
-    display: block;
-    margin: 1.4em auto 0;
-    height: 3em;
-  }
-
-  p {
-    text-align: center;
-  }
-
-  .running-square {
-    position: absolute;
-    display: none;
-    top: 40%;
-    left: 0;
-    height: 10em;
-    width: 10em;
-    background-color: black;
-  }
-
-  form {
-    position: absolute;
-    bottom: 5em;
-    margin: 0 auto;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-</style>
-
+<link href="style.css" rel="stylesheet">
+<link href="favicon.ico" rel="icon">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JS Monitor Test</title>
+  <meta name="keywords" content=""dead, pixel, checker, utility>
+  <meta name="description" content="Dead pixels checker online">
+  <title>JS Monitor Test - dead pixels checker online</title>
 </head>
 
 <body>
-  <section id="HelpScreen">
-    <article>
+  <section id="StartScreen" class="information-screen" style="display:flex">
+    <article class="information-panel">
       <h1>JS Monitor Test</h1>
 
-        <p>On-line utility for display testing</p>
+        <p>Online utility for dead pixels and ghosting checking.</p>
 
-        <p>Press button below or hit F11 to enter to enter full screen.</p>
+        <p>Press button below to enter full screen and start testing.</p>
 
-        <button id="FullScreenButton">Full Screen</button>
+        <button id="StartButton" class="button button-primary" tabindex="1">Start Test</button>
+        <footer class="information-panel__footer">
+          © 2022 <a href="https://github.com/AlexEmashev/js-monitor-test">Alexander Emashev</a> under The MIT License
+        </footer>
+    </article>
+  </section>
+
+  <section id="EndScreen" class="information-screen" style="display:none">
+    <article class="information-panel">
+      <h1>Test Finished</h1>
+
+        <p>Click anywhere to start again.</p>
+
+        <p>Press button below to finish testing.</p>
+
+        <button id="StartOverButton" class="button button-secondary" tabindex="2">Start Over</button>
+        <button id="FinishButton" class="button button-primary" tabindex="1">Finish</button>
     </article>
   </section>
 
@@ -206,137 +45,7 @@
     <label for="speed">Speed:</label>
     <input id="speed" name="speed" type="range" min="0" max="100"></input>
   </form>
-<script>
-  const helpScreen = document.querySelector('#HelpScreen');
-  const fullScreenButton = document.querySelector('#FullScreenButton');
-  const runningSquare = document.querySelector('.running-square');
-  const controlsForm = document.forms['animationTest'];
-  let animationRunning = true;
-  let currentTestNumber = 0;
-  let animationSpeed = 30;
-
-  console.log(controlsForm.elements)
-
-  controlsForm.speed.value = animationSpeed;
-  controlsForm.speed.oninput = setSpeed;
-
-  document.documentElement.addEventListener('click', (event) => {
-    if (event.target === document.documentElement) {
-      switchTest();
-    }
-  });
-  document.documentElement.addEventListener('keydown', bodyClickHandler);
-  document.addEventListener('fullscreenchange', toggleFullScreen);
-
-  fullScreenButton.addEventListener('click', () => {
-    document.documentElement.requestFullscreen();
-  });
-
-  function bodyClickHandler(event) {
-    console.log(event.key);
-    const exitFullScreenKeys = [
-      'F11',
-      'Escape'
-    ];
-
-    // On Escape or F11 press browser automatically exits full screen
-    // We need only return help screen
-    if (exitFullScreenKeys.includes(event.key)) {
-      exitFullScreen();
-    };
-  }
-
-  function toggleFullScreen() {
-    if (!document.fullscreenElement) {
-      exitFullScreen();
-    } else {
-      enterFullScreen();
-    }
-
-  }
-
-  function exitFullScreen() {
-      helpScreen.style.display = 'flex';
-      runningSquare.style.display = 'none';
-  }
-
-  function enterFullScreen() {
-    helpScreen.style.display = 'none';
-  }
-
-  function setSpeed() {
-    animationSpeed = parseInt(controlsForm.speed.value);
-  }
-
-  function switchTest() {
-    animationRunning = false;
-    runningSquare.style.display = 'none';
-    runningSquare.style.backgroundColor = 'black';
-    controlsForm.style.display = 'none';
-
-    switch(currentTestNumber) {
-      case 0:
-        document.body.style.backgroundColor = 'black';
-        currentTestNumber += 1;
-        return;
-      case 1:
-        document.body.style.backgroundColor = 'green';
-        currentTestNumber += 1;
-        return;
-      case 2:
-        document.body.style.backgroundColor = 'red';
-        currentTestNumber += 1;
-        return;
-      case 3:
-        document.body.style.backgroundColor = 'blue';
-        currentTestNumber += 1;
-        return;
-      case 4:
-        document.body.style.backgroundColor = 'gray';
-        currentTestNumber += 1;
-        return;
-      case 5:
-        animationRunning = true;
-        runningSquare.style.display = 'block';
-        controlsForm.style.display = 'flex';
-        controlsForm.style.color = 'black';
-        document.body.style.backgroundColor = 'white';
-        runAnimation();
-
-        currentTestNumber += 1;
-        return;
-      case 6:
-        animationRunning = true;
-        runningSquare.style.display = 'block';
-        runningSquare.style.backgroundColor = 'white';
-        document.body.style.backgroundColor = 'black';
-        controlsForm.style.color = 'white';
-        controlsForm.style.display = 'flex';
-        runAnimation();
-
-        currentTestNumber += 1;
-        return;
-      default:
-        document.body.style.backgroundColor = 'white';
-        currentTestNumber = 0;
-        return;
-    }
-  }
-
-  function runAnimation() {
-    if (!animationRunning) return;
-
-    let currentPosition = parseInt(runningSquare.style.left.replace(' px', ''));
-
-    if (currentPosition + runningSquare.offsetWidth >= window.innerWidth) {
-      currentPosition = 0;
-    }
-
-    runningSquare.style.left = currentPosition + animationSpeed + 'px';
-
-    window.requestAnimationFrame(runAnimation);
-  }
-</script>
+<script src="app.js"></script>
 </body>
 
 </html>
