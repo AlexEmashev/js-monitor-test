@@ -1,3 +1,10 @@
+/**
+ * LCD display checking utility.
+ * Can be used to check a display for dead pixels and ghosting.
+ *
+ * Copyright 2022 Alexander Emashev The MIT license.
+ */
+
 const startScreen = document.querySelector('#StartScreen');
 const endScreen = document.querySelector('#EndScreen');
 const startButton = document.querySelector('#StartButton');
@@ -101,6 +108,7 @@ function goFirstTest() {
 }
 
 function switchTest() {
+  // ToDo: Add text scrolling
   switch(currentTestNumber) {
   case 0:
     hideEndScreen();
